@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEGO Birthday - The Master Stack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --lego-blue: #0055BF; --lego-bright-blue: #0096FF; --lego-yellow: #FFCF00;
+            --lego-red: #E3000B; --lego-green: #009639; --white: #FFFFFF; --skin: #FFD500;
+        }
+
+        body {
+            background-color: var(--lego-blue); background-image: radial-gradient(circle, rgba(255,255,255,0.1) 20%, transparent 20%);
+            background-size: 40px 40px; font-family: 'Inter', sans-serif; margin: 0;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; color: var(--white); overflow: hidden;
+        }
+
+        body::after { content: ''; position: absolute; bottom: 0; width: 100%; height: 12vh; background: var(--lego-green); border-top: 10px solid #007a2e; z-index: 1; }
+
+        .screen { display: flex; flex-direction: column; align-items: center; width: 100%; z-index: 5; }
+        .hidden { display: none !important; }
+
+        /* --- STACKING TOWER --- */
+        #tower-container {
+            display: flex; flex-direction: column-reverse; align-items: center;
+            gap: 2px; margin-top: 20px; min-height: 300px; width: 200px;
+        }
+        .stacked-brick {
+            width: 80px; height: 30px; border-radius: 4px; border: 2px solid rgba(0,0,0,0.2);
+            box-shadow: inset 0 5px 0 rgba(255,255,255,0.3);
+            animation: brickPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes brickPop { from { transform: scale(0) translateY(-50px); } to { transform: scale(1) translateY(0); } }
+
+        /* --- EYES & CURSOR --- */
+        #eye-container { position: fixed; top: 20px; right: 20px; width: 80px; height: 80px; background: var(--skin); border-radius: 20px; border: 4px solid #333; display: flex; justify-content: center; align-items: center; gap: 10px; z-index: 100; }
+        .pupil { width: 10px; height: 10px; background: #000; border-radius: 50%; transition: 0.05s; }
+        .cursor-stud { position: fixed; width: 10px; height: 10px; border-radius: 50%; pointer-events: none; z-index: 999; }
+
+        /* --- INTERFACE --- */
+        .instruction-page {
+            width: 480px; max-width: 90vw; min-height: 520px; background: #f9f9f9; color: #333; border-radius: 25px;
+            border: 12px solid white; padding: 30px; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            display: flex; flex-direction: column; animation: pageFlip 0.5s forwards;
+        }
+        
+        .final-card {
+            width: 600px; max-width: 95vw; height: 85vh; overflow-y: auto; background: white; color: #333;
+            border-radius: 25px; border: 15px solid var(--lego-yellow); padding: 40px; position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        @keyframes pageFlip { from { transform: rotateY(-30deg); opacity: 0; } to { transform: rotateY(0); opacity: 1; } }
+
+        .step-badge { background: var(--lego-red); color: white; font-family: 'Bungee'; padding: 5px 15px; border-radius: 5px; margin-bottom: 10px; align-self: start; }
+        .message-box { background: #fff; padding: 20px; border-radius: 15px; border-left: 10px solid var(--lego-bright-blue); font-size: 1.1rem; line-height: 1.6; }
+        .nav-btn { margin-top: auto; padding: 15px; background: var(--lego-yellow); font-family: 'Bungee'; border: none; border-radius: 8px; box-shadow: 0 6px 0px #b39200; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div id="eye-container"><div class="pupil" id="eye-l"></div><div class="pupil" id="eye-r"></div></div>
+
+    <div id="game-screen" class="screen">
+        <h1 style="font-family:'Bungee'; text-align:center; text-shadow:4px 4px 0 var(--lego-red); margin-bottom: 10px;">
+            STACK THE BRICKS!
+        </h1>
+        <p style="font-family:'Bungee'; color:white; margin-bottom: 20px;">CLICKS TO FINISH: <span id="clicks-left">15</span></p>
+        
+        <div id="tower-container" onclick="addBrick()">
+            <div style="width:120px; height:20px; background:#333; border-radius:5px; margin-bottom: -5px;"></div> </div>
+
+        <p style="margin-top:20px; font-weight:bold; opacity:0.8;">(Click the platform to stack!)</p>
+    </div>
+
+    <div id="gift-screen" class="screen hidden">
+        <div id="manual-content"></div>
+    </div>
+
+    <div id="final-screen" class="screen hidden">
+        <div class="final-card">
+            <div style="text-align:center; font-size:4rem; margin-bottom:10px;">🏆</div>
+            <h2 style="font-family:'Bungee'; color:var(--lego-red); text-align:center; margin-top:0;">MASTER BUILD COMPLETE!</h2>
+            <div style="background:#f0f7ff; padding:25px; border-radius:20px; border-bottom:8px solid var(--lego-bright-blue); line-height:1.8; font-size:1.15rem;">
+                <p><strong>You're the Master Builder of your own life!</strong></p>
+                <p>Happy Birthdayy, Lourainee! (wala kang choice kung hindi tanggapin na tinatawag talaga kita by your first name) (˶˃𐃷˂˶).</p>
+                <p>Ang hirap gawin nito ha, lalo na at minsan naaya ako mag-ml (hays hahahaha). Kidding aside, I will never get tired to say thank you. You've been with me thru ups and downs. You've seen every season of my life and yet you always treat me with care (na may halong asar).</p>
+                <p>Your patience is unmeasurable. Your assurance, your caring side that comes out when things get tough—it all means so much. You’ve set the standard for friendship. Ikaw ang role-model! Thank you for being you.</p>
+                <p>I hope you know you have me in everything. My support and my pang-aasar (buy one take one 'to). Lean on me when something is wrong, message me if you want na ma-ls sa ml, or asarin mo lang ako pag bored ka. Basta, kahit anong trip sasamahan ka! :)</p>
+                <p style="text-align:right; font-family:'Bungee'; color:var(--lego-blue); font-size:1.2rem;">- Pau Pau :)</p>
+            </div>
+            <button class="nav-btn" style="width:100%; margin-top:20px;" onclick="location.reload()">START NEW BUILD</button>
+        </div>
+    </div>
+
+    <script>
+        let clicks = 15, currentStep = 0;
+        const colors = ['#E3000B', '#FFCF00', '#009639', '#0096FF', '#FFFFFF'];
+        
+        const messageSteps = [
+            { title: "STEP 1: THE FOUNDATION", text: "You're the Master Builder of your own life! Happy Birthdayy, Lourainee! (˶˃𐃷˂˶).", img: "🏗️" },
+            { title: "STEP 2: THE PROCESS", text: "Ang hirap gawin nito ha, lalo na at minsan naaya ako mag-ml (hays hahahaha). I will never get tired to say thank you.", img: "🎮" },
+            { title: "STEP 3: THE SEASONS", text: "You've seen every season of my life and yet you always treat me with care (na may halong asar). Your patience is unmeasurable.", img: "🧱" },
+            { title: "STEP 4: THE MODEL", text: "You’ve set the standard for friendship. Ikaw ang role-model! Thank you for being you.", img: "⭐" }
+        ];
+
+        // Cursor & Eyes
+        document.addEventListener('mousemove', (e) => {
+            const stud = document.createElement('div');
+            stud.className = 'cursor-stud'; stud.style.left = e.clientX+'px'; stud.style.top = e.clientY+'px';
+            stud.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+            document.body.appendChild(stud);
+            stud.animate([{opacity:1}, {opacity:0}], 600).onfinish = () => stud.remove();
+
+            const eyes = [document.getElementById('eye-l'), document.getElementById('eye-r')];
+            eyes.forEach(eye => {
+                const rect = eye.getBoundingClientRect();
+                const x = (e.clientX - (rect.left + 40)) / 10;
+                const y = (e.clientY - (rect.top + 40)) / 10;
+                eye.style.transform = `translate(${Math.max(-8, Math.min(8, x))}px, ${Math.max(-8, Math.min(8, y))}px)`;
+            });
+        });
+
+        function addBrick() {
+            if (clicks <= 0) return;
+            
+            clicks--;
+            document.getElementById('clicks-left').innerText = clicks;
+
+            const brick = document.createElement('div');
+            brick.className = 'stacked-brick';
+            brick.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+            document.getElementById('tower-container').appendChild(brick);
+
+            if (clicks === 0) {
+                setTimeout(() => {
+                    document.getElementById('game-screen').classList.add('hidden');
+                    document.getElementById('gift-screen').classList.remove('hidden');
+                    renderStep();
+                }, 500);
+            }
+        }
+
+        function renderStep() {
+            const data = messageSteps[currentStep];
+            document.getElementById('manual-content').innerHTML = `
+                <div class="instruction-page">
+                    <div class="step-badge">${data.title}</div>
+                    <div style="font-size:4rem; text-align:center; margin:10px 0;">${data.img}</div>
+                    <div class="message-box">${data.text}</div>
+                    <button class="nav-btn" onclick="nextStep()">${currentStep === 3 ? 'FINISH BUILD →' : 'NEXT STEP →'}</button>
+                </div>`;
+        }
+
+        function nextStep() {
+            if (currentStep < 3) { currentStep++; renderStep(); }
+            else { 
+                document.getElementById('gift-screen').classList.add('hidden'); 
+                document.getElementById('final-screen').classList.remove('hidden'); 
+                startConfetti(); 
+            }
+        }
+
+        function startConfetti() {
+            for(let i=0; i<100; i++) {
+                setTimeout(() => {
+                    const c = document.createElement('div');
+                    c.style.cssText = `position:fixed; width:15px; height:10px; left:${Math.random()*100}vw; top:-20px; background:${colors[Math.floor(Math.random()*4)]}; z-index:1000;`;
+                    document.body.appendChild(c);
+                    c.animate([{transform:'translateY(0)'}, {transform:`translateY(110vh) rotate(${Math.random()*720}deg)`}], {duration:3000}).onfinish=()=>c.remove();
+                }, i * 30);
+            }
+        }
+    </script>
+</body>
+</html>
